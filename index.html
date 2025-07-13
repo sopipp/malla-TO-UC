@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Malla Interactiva TO</title>
+  <style>
+    body { font-family: Arial; background: #f4f4f4; padding: 20px; }
+    .semestre { margin-bottom: 20px; }
+    .ramo { display: flex; align-items: center; margin: 5px 0; padding: 4px; background: white; border: 1px solid #ccc; border-radius: 5px; cursor: move; }
+    .ramo input[type="checkbox"] { margin-right: 10px; }
+    .ramo.locked { opacity: 0.4; pointer-events: none; }
+    .ramo.completed { text-decoration: line-through; color: green; }
+    .formacion-general { background-color: #ffe4e1; }
+  </style>
+</head>
+<body>
+  <h1>Malla Interactiva - Terapia Ocupacional PUC</h1>
+  <div id="malla"></div>
+  <script>
+    const malla = [/* Aquí iría el JSON completo con los 10 semestres */];
+    const estado = JSON.parse(localStorage.getItem('estadoMallaTO')) || {};
+    function renderMalla() {
+      const contenedor = document.getElementById('malla');
+      contenedor.innerHTML = '';
+      malla.forEach((sem, i) => {
+        const divSemestre = document.createElement('div');
+        divSemestre.className = 'semestre';
+        divSemestre.dataset.index = i;
+        const h2 = document.createElement('h2');
+        h2.textContent = sem.semestre;
+        divSemestre.appendChild(h2);
+        sem.ramos.forEach((ramo, j) => {
+          const divRamo = document.createElement('div');
+          divRamo.className = 'ramo';
+          if (ramo.formacion) divRamo.classList.add('formacion-general');
+          const cumplidos = ramo.requisitos.every(req => estado[req]);
+          if (!cumplidos && ramo.requisitos.length > 0) divRamo.classList.add('locked');
+          if (estado[ramo.id]) divRamo.classList.add('completed');
+          divRamo.setAttribute('draggable', ramo.formacion ? 'true' : 'false');
+          divRamo.dataset.sem = i; divRamo.dataset.index = j;
+          const checkbox = document.createElement('input');
+          checkbox.type = 'checkbox'; checkbox.checked = estado[ramo.id] || false;
+          checkbox.disabled = !cumplidos && !checkbox.checked;
+          checkbox.addEventListener('change', () => {
+            estado[ramo.id] = checkbox.checked;
+            localStorage.setItem('estadoMallaTO', JSON.stringify(estado));
+            renderMalla();
+          });
+          const label = document.createElement('label');
+          label.textContent = ramo.nombre;
+          divRamo.appendChild(checkbox); divRamo.appendChild(label);
+          divSemestre.appendChild(divRamo);
+        });
+        contenedor.appendChild(divSemestre);
+      });
+      setDragEvents();
+    }
+    function setDragEvents() {
+      document.querySelectorAll('.ramo[draggable=true]').forEach(elem => {
+        elem.addEventListener('dragstart', (e) => {
+          e.dataTransfer.setData('text/plain', JSON.stringify({ sem: elem.dataset.sem, index: elem.dataset.index }));
+        });
+      });
+      document.querySelectorAll('.semestre').forEach(container => {
+        container.addEventListener('dragover', (e) => e.preventDefault());
+        container.addEventListener('drop', (e) => {
+          e.preventDefault();
+          const data = JSON.parse(e.dataTransfer.getData('text/plain'));
+          const ramo = malla[data.sem].ramos.splice(data.index, 1)[0];
+          const destino = container.dataset.index;
+          malla[destino].ramos.push(ramo);
+          renderMalla();
+        });
+      });
+    }
+    renderMalla();
+  </script>
+</body>
+</html>

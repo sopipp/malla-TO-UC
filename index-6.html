@@ -1,0 +1,120 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Malla Interactiva TO - Doble Fila</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #fff0f5;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      color: #b64274;
+    }
+    .fila {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      align-items: flex-start;
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 20px;
+      padding: 20px 0;
+    }
+    .semestre {
+      background: #ffe4ec;
+      border: 2px solid #f8bcd9;
+      border-radius: 12px;
+      padding: 15px;
+      min-width: 240px;
+      max-width: 260px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    .semestre h2 {
+      text-align: center;
+      color: #b64274;
+      font-size: 1.1em;
+      margin-top: 0;
+    }
+    .ramo {
+      background: #fff;
+      border-radius: 8px;
+      padding: 6px 10px;
+      margin: 6px 0;
+      display: flex;
+      align-items: center;
+      font-size: 0.95em;
+      box-shadow: 1px 1px 4px rgba(0,0,0,0.05);
+    }
+    .ramo input[type="checkbox"] {
+      margin-right: 10px;
+    }
+    .ramo.locked {
+      opacity: 0.4;
+      pointer-events: none;
+    }
+    .ramo.completed {
+      text-decoration: line-through;
+      color: #66bb6a;
+    }
+    .formacion-general {
+      background-color: #fdf0ff;
+    }
+  </style>
+</head>
+<body>
+  <h1>Malla Interactiva - Terapia Ocupacional PUC</h1>
+  <div class="fila" id="fila1"></div>
+  <div class="fila" id="fila2"></div>
+  <script>
+    const fila1 = [{"semestre": "Semestre I", "ramos": [{"nombre": "Precálculo", "id": "MAT1000"}, {"nombre": "Biología de la Célula y Sistemas", "id": "BIO141C"}, {"nombre": "Integrado Ciencias Básicas", "id": "MET101A"}, {"nombre": "Fundamentos Psicológicos TO", "id": "MET102A"}, {"nombre": "Destrezas Terapéuticas I", "id": "OCU101A"}, {"nombre": "Profesión y Disciplina TO", "id": "OCU102A"}]}, {"semestre": "Semestre II", "ramos": [{"nombre": "Física", "id": "FIS109A"}, {"nombre": "Fisiología General", "id": "BIO135T"}, {"nombre": "Morfología General", "id": "MET201A"}, {"nombre": "Ciclo Vital y Desarrollo", "id": "MET202A"}, {"nombre": "Destrezas Terapéuticas II", "id": "OCU201A"}]}, {"semestre": "Semestre III", "ramos": [{"nombre": "Análisis del Movimiento Ocupacional", "id": "CSS301A"}, {"nombre": "Fisiopatología", "id": "MET301A"}, {"nombre": "Psicología del Trabajo", "id": "PSI2502"}, {"nombre": "Neurociencias Aplicadas", "id": "CSS302A"}, {"nombre": "Habilidades y Técnicas Terapéuticas I", "id": "OCU301A"}]}, {"semestre": "Semestre IV", "ramos": [{"nombre": "Patologías del Sistema Músculo-Esquelético", "id": "CSS401A"}, {"nombre": "Farmacología en Ciencias de la Salud", "id": "MET401A"}, {"nombre": "Bioestadística", "id": "MET402A"}, {"nombre": "Alteraciones del Sistema Nervioso Adultos", "id": "MET403A"}, {"nombre": "Habilidades y Técnicas Terapéuticas II", "id": "OCU401A"}]}, {"semestre": "Semestre V", "ramos": [{"nombre": "Ergonomía e Inclusión Social", "id": "OCU501A"}, {"nombre": "Semiología y Anamnesis", "id": "OCU502A"}, {"nombre": "Salud Pública", "id": "MET501A"}, {"nombre": "Salud Mental en Niños y Adolescentes", "id": "MET502A"}, {"nombre": "Bioética", "id": "MET503A"}]}];
+    const fila2 = [{"semestre": "Semestre VI", "ramos": [{"nombre": "Tecnologías de Apoyo a la Rehabilitación", "id": "OCU601A"}, {"nombre": "Razonamiento Profesional", "id": "OCU602A"}, {"nombre": "Rehabilitación Psicosocial", "id": "OCU603A"}, {"nombre": "Salud Mental en Adulto", "id": "CSS601A"}, {"nombre": "Investigación Aplicada", "id": "MET601A"}]}, {"semestre": "Semestre VII", "ramos": [{"nombre": "Ortótica", "id": "OCU701A"}, {"nombre": "Intervención en Niños y Adolescentes", "id": "OCU702A"}, {"nombre": "Intervención Psicosocial y Comunitaria", "id": "OCU703A"}, {"nombre": "Intervención en Salud Mental y Persona Mayor", "id": "OCU704A"}]}, {"semestre": "Semestre VIII", "ramos": [{"nombre": "Intervención en Persona Mayor", "id": "OCU801A"}, {"nombre": "Intervención en Salud Física", "id": "OCU802A"}, {"nombre": "Unidad de Investigación", "id": "OCU803A"}]}, {"semestre": "Semestre IX", "ramos": [{"nombre": "Internado en Salud Física", "id": "OCU901A"}, {"nombre": "Optativo de Profundización", "id": "OPT901", "formacion": true}, {"nombre": "Internado Electivo I", "id": "OCU905A", "formacion": true}]}, {"semestre": "Semestre X", "ramos": [{"nombre": "Internado en Salud Mental", "id": "OCU902A"}, {"nombre": "Internado en Salud Sociocomunitario", "id": "OCU903A"}, {"nombre": "Internado Electivo II", "id": "OCU906A", "formacion": true}]}, {"semestre": "Formación General", "ramos": [{"nombre": "Filosofía", "id": "FIL2001", "formacion": true}, {"nombre": "Teología", "id": "TTF", "formacion": true}, {"nombre": "Inglés", "id": "VRA2000", "formacion": true}, {"nombre": "Español", "id": "VRA100C", "formacion": true}]}];
+    const estado = JSON.parse(localStorage.getItem('estadoMallaTO')) || {};
+
+    function renderFila(fila, contenedorId) {
+      const contenedor = document.getElementById(contenedorId);
+      contenedor.innerHTML = '';
+      fila.forEach((sem, i) => {
+        const divSem = document.createElement('div');
+        divSem.className = 'semestre';
+        divSem.dataset.index = i;
+        const titulo = document.createElement('h2');
+        titulo.textContent = sem.semestre;
+        divSem.appendChild(titulo);
+        sem.ramos.forEach((ramo, j) => {
+          const divRamo = document.createElement('div');
+          divRamo.className = 'ramo';
+          if (ramo.formacion) divRamo.classList.add('formacion-general');
+          const cumplidos = !ramo.requisitos || ramo.requisitos.every(req => estado[req]);
+          if (!cumplidos && ramo.requisitos?.length > 0) divRamo.classList.add('locked');
+          if (estado[ramo.id]) divRamo.classList.add('completed');
+          divRamo.setAttribute('draggable', ramo.formacion ? 'true' : 'false');
+          divRamo.dataset.sem = i; divRamo.dataset.index = j;
+          const checkbox = document.createElement('input');
+          checkbox.type = 'checkbox'; checkbox.checked = estado[ramo.id] || false;
+          checkbox.disabled = !cumplidos && !checkbox.checked;
+          checkbox.addEventListener('change', () => {
+            estado[ramo.id] = checkbox.checked;
+            localStorage.setItem('estadoMallaTO', JSON.stringify(estado));
+            renderFila(fila1, 'fila1');
+            renderFila(fila2, 'fila2');
+          });
+          const label = document.createElement('label');
+          label.textContent = ramo.nombre;
+          divRamo.appendChild(checkbox); divRamo.appendChild(label);
+          divSem.appendChild(divRamo);
+        });
+        contenedor.appendChild(divSem);
+      });
+    }
+
+    renderFila(fila1, 'fila1');
+    renderFila(fila2, 'fila2');
+  </script>
+</body>
+</html>
